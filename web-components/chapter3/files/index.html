@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Google Poly HTTP Request</title>
+    <link  rel="stylesheet" type="text/css" href="./style.css">
+    <script>
+            class PolySearch extends HTMLElement {
+                connectedCallback() {
+                    if (this.hasAttribute('thumbheight')) {
+                        this._thumbheight = this.getAttribute('thumbheight');
+                        this._thumbwidth = (this.getAttribute('thumbheight') * 1.3333 /*aspect ratio*/);
+                    } else {
+                        this._thumbheight = 150;
+                        this._thumbwidth = 200;
+                    }
+
+                    if (this.hasAttribute('backgroundcolor')) {
+                        this.style.backgroundColor = this.getAttribute('backgroundcolor');
+                    }
+                }
+
+                static get observedAttributes() {
+                    console.log("observedAttributes->");
+                    return ['searchterm'];
+                }
+
+                attributeChangedCallback(name, oldval, newval) {
+                    console.log(`attributeChangedCallback-> name: [${name}] newval: [${newval}]`);
+                    if (name === 'searchterm') {
+                        this.doSearch();
+                    }
+                }
+
+                renderResults(assets) {
+                    let html = '';
+                    for (let c = 0; c < assets.length; c++) {
+                        html += '<img src="' + assets[c].thumbnail.url + '" width="' + this._thumbwidth + '" height="' + this._thumbheight + '"/>';
+                    }
+                    this.innerHTML = html;
+                }
+
+                doSearch() {
+                    const url = this.getAttribute('baseuri');
+                    const request = new XMLHttpRequest();
+                    request.open('GET', url, true);
+                    request.addEventListener('load', (event) => {
+                        this.renderResults(JSON.parse(event.target.response).assets);
+                    });
+                    request.send();
+                }
+
+                set apiKey(value) {
+                    this._apiKey = value;
+                    this.doSearch();
+                }  
+
+                set searchTerm(value) {
+                    this._searchTerm = value;
+                    this.doSearch();
+                }   
+                
+                get searchTerm() {
+                    return this._searchTerm;
+                }
+            }
+
+        customElements.define('poly-search', PolySearch);
+    </script>
+</head>
+<body>
+    <label>Enter search term: </label>
+    <input type="text" onchange="updatePolySearch(event)" />
+    <br /><br />
+    <script>
+        function updatePolySearch(event) {
+            document.querySelector('poly-search').setAttribute('searchterm',
+                event.target.value);
+        }
+    </script>
+    <poly-search searchterm="parrot"
+                 thumbheight="50"
+                 backgroundcolor="red"
+                 baseuri="http://localhost:3001/assets.json"
+                 >
+    </poly-search>
+</body>
+</html>
