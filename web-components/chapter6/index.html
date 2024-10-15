@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script type="module" src="./test.js"></script>
+	<script type="module" src="./test1.js"></script>
+	<style>
+		div {
+			color: red;
+		}
+		body {
+			--text-color: blue;
+		}
+	</style>
+</head>
+<body>
+	<div>11</div>
+	<span>
+		<sample-component></sample-component>
+	</span>
+	<!-- <div id="host"></div>
+	<script>
+		const shadowHost = document.getElementById('host');
+		const shadowRoot = shadowHost.attachShadow({ mode: 'open' });
+	</script> -->
+</body>
+
+</html>
