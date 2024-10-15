@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "run": "nodemon app.js"
+    "run": "nodemon app.js",
+    "build": "rollup ./web-components/chapter6/test.js --name slider"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
@@ -8,7 +9,6 @@
     "express": "^4.21.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.7",
-    "rollup": "^4.24.0"
+    "nodemon": "^3.1.7"
   }
 }

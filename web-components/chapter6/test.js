@@ -1,3 +1,7 @@
+document.addEventListener('myevent', function(e) {
+	console.log(`target: [${e.target.id}] path: ${e.composedPath()}`);
+});
+
 window.addEventListener("load", () => {
 	//const shadowHost = document.getElementById("host");
 	//const shadowRoot = shadowHost.shadowRoot;
@@ -6,24 +10,43 @@ window.addEventListener("load", () => {
 
 	const component = document.querySelector('sample-component');
 	const shadow = component.shadowRoot;
-	console.log(`component: ${component}  shadow: ${shadow}`);
+
 
 	if(shadow) {
-		shadow.querySelector('.inside-component').innerHTML += ' has been hijacked';
+		
+		const inside = shadow.querySelector('#inside');
+		console.log(`component: ${component}  inside: ${inside}`);
+
+		inside.innerHTML += ' has been hijacked';
 	
+		const event = new CustomEvent("myevent", {
+			bubbles: true,
+			composed: true,
+			detail: {
+				message: "hi",
+				number: 5,
+			},
+		});
+		component.dispatchEvent(event);
+		//setTimeout(function () {
+      	//	inside.dispatchEvent(event);
+    	//}, 400);
+
 	} else {
 		const comp = document.querySelector('.inside-component');
-		console.log(`!!! component.shadowRoot is null comp: ${comp}`);
+		//console.log(`!!! component.shadowRoot is null comp: ${comp}`);
 	}
+
+
 
 })
 
 
 class SampleComponent extends HTMLElement {
 	connectedCallback() {
-		const root = this.attachShadow({mode: 'closed'});
+		const root = this.attachShadow({mode: 'open'});
 		root.innerHTML =
-			`<div class="inside-component">My Component</div>
+			`<div class="inside-component" id="inside">My Component</div>
 			 <style>
 				:host {
 					all: initial;
